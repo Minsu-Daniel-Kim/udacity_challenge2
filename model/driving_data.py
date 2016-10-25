@@ -31,14 +31,18 @@ c = list(zip(xs, ys))
 random.shuffle(c)
 xs, ys = zip(*c)
 
-train_xs = xs[:int(len(xs) * 0.8)]
-train_ys = ys[:int(len(xs) * 0.8)]
+train_xs = xs[:int(len(xs) * 0.7)]
+train_ys = ys[:int(len(xs) * 0.7)]
 
-val_xs = xs[-int(len(xs) * 0.2):]
-val_ys = ys[-int(len(xs) * 0.2):]
+val_xs = xs[-int(len(xs) * 0.3):-int(len(xs) * 0.1)]
+val_ys = ys[-int(len(xs) * 0.3):-int(len(xs) * 0.1)]
+
+test_xs = xs[-int(len(xs) * 0.1):]
+test_ys = ys[-int(len(ys) * 0.1):]
 
 num_train_images = len(train_xs)
 num_val_images = len(val_xs)
+num_test_images = len(test_xs)
 
 def LoadTrainBatch(batch_size):
     global train_batch_pointer
