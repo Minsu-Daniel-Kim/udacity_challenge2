@@ -1,0 +1,7 @@
+{
+  "MODEL_TITLE": "alexNet",
+  "NUM_ITER": 100000,
+  "BATCH_SIZE": 100,
+  "MODEL_FILE": "alexnet"
+}
+
