@@ -1,36 +1,6 @@
 import os
 import json
 
-
-# Serializes DATA under NAME
-# Serialize to save/DIRECTORY/name
-# Remember to add extension manually if there needs to be any.
-def to_json_file(data, directory, name):
-    path_name = '../save/' + directory + '/' + name
-    with open(path_name, 'w') as f:
-        json.dump(data, f)
-
-
-# Opens up a file located in save/DIRECTORY/FILE_NAME
-def from_json_file(directory, file_name):
-    path_name = '../save/' + directory + '/' + name
-    with open(path_name) as data_file:    
-        data = json.load(data_file)
-    print (data)
-    return data
-
-# Given a list of models to deserialize, returns a list with all the models
-# Assume that recipe contains list of strings
-def from_recipe():
-    all_the_models = []
-    with open('../save/config/recipe.json') as recipe:
-        to_deserialize = json.load(recipe)
-    for ingredient in to_deserialize:
-    	all_the_models += [from_json_file(config, ingredient)]
-    return all_the_models
-
-   
-
 def saveReport(models, values):
 	jsonData = list()
 	labels = ["a","b","c","d"]
