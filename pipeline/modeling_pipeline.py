@@ -2,13 +2,14 @@ import os
 import tensorflow as tf
 import driving_data
 import model
+from drivenet import DriveNet
 import utils
 
 def train():
 
     models = utils.from_recipe()
     for model in models:
-        config = utils.from_json_file("config", "%s.tf" % model)
+        config = utils.from_json_file("config", "%s.ckpt" % model)
         # config values
         NUM_ITER = config["NUM_ITER"]
         BATCH_SIZE = config["BATCH_SIZE"]
