@@ -1,27 +1,40 @@
 from os import listdir
 from os.path import isfile, join
+from zca import ZCA
 import argparse
 import sys
 import numpy
 import cv2
 import json
+import utils
 
 """ 
 Given Paths, reads images in paths and does all preprocesses marked in ARGS.
 All processed images are stored in new directories with appended suffix "_processed".
 """
-def preprocessImage(paths):
-	for path in paths:
-		imagePath="/Volumes/DANIEL/dataset/{0}".format(path)
-		processedImagePath = imagePath + "_processed"
-		readableImages = [ f for f in listdir(imagePath) if isfile(join(imagePath,f)) ]
-		for n in range(0, len(readableImages)):
-		  image = cv2.imread( join(imagePath,readableImages[n]) )
-		  if args.zca:
-		  	image = zcaImage(image)
-		  if args.normalized:
-		  	image = normalizeImage(image)
-		  cv2.imwrite(join(processedImagePath, readableImages[n]), image)
+def preprocessImage(imagePath):
+	# for path in paths:
+	processedImagePath = imagePath + "_processed"
+	print processedImagePath
+	readableImages = [ f for f in listdir(imagePath) if not f.startswith('.') and isfile(join(imagePath,f)) ]
+	image_flattened = None
+	for n in range(0, len(readableImages)):
+		if n % 5000 == 0:
+			print n
+		image = cv2.imread( join(imagePath,readableImages[n]) )
+	#   # if args.zca:
+	#   # 	image_flattened = utils.gather_flattened_image(image, image_flattened)
+		if args.normalized:
+			image = utils.normalizeImage(image)
+		cv2.imwrite(join(processedImagePath, readableImages[n]), image)
+	# trf = ZCA().fit(image_flattened)
+	# image_whitened = trf.transform(image_flattened)
+
+	# with open('../save/pickle/image_flattened.pickle', 'wb') as outfile:
+	# 	pickle.dump(image_flattened, outfile)
+	# with open('../save/pickle/zca_matrix.pickle', 'wb') as outfile:
+ #    pickle.dump(image_whitened, outfile)
+	# utils.zca_whitening(gathered_matrix)
 
 def readConfig(filePath):
 	with open(filePath) as config_file:
@@ -44,9 +57,7 @@ def main():
 	args = parser.parse_args()
 	if len(args.config) != 0:
 		readConfig(args.config)
-	preprocessImage("center", "center_processed")
-	preprocessImage("left", "left_processed")
-	preprocessImage("right", "right_processed")
+	preprocessImage("../rawdata/driving_dataset")
 
 if __name__ == '__main__':
 	main()
