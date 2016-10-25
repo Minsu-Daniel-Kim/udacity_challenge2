@@ -11,12 +11,17 @@ train_batch_pointer = 0
 val_batch_pointer = 0
 DATADIR = "../rawdata"
 
-with open('../db/driving_dataset2/data.json') as data_file:
-    data = json.load(data_file)
+# with open('../db/driving_dataset2/data.json') as data_file:
+#     data = json.load(data_file)
+#
+#     for key, value in data.items():
+#         xs.append("../db/driving_dataset2/" + key)
+#         ys.append(float(value))
 
-    for key, value in data.items():
-        xs.append("../db/driving_dataset2/" + key)
-        ys.append(float(value))
+with open(DATADIR + "/driving_dataset/data.txt") as f:
+    for line in f:
+        xs.append("driving_dataset/" + line.split()[0])
+        ys.append(float(line.split()[1]) * scipy.pi / 180)
 
 #get number of images
 num_images = len(xs)
