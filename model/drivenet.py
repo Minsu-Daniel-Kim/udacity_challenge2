@@ -10,7 +10,6 @@ class DriveNet:
         self.width = width
         self.channel = channel
 
-
     def weight_variable(self, shape):
         initial = tf.truncated_normal(shape, stddev=0.1)
         return tf.Variable(initial)
@@ -96,4 +95,5 @@ class DriveNet:
         b_fc5 = self.bias_variable([1])
 
         y = tf.mul(tf.atan(tf.matmul(h_fc4_drop, W_fc5) + b_fc5), 2)  # scale the atan output
+
         return y, y_, x, keep_prob

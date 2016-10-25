@@ -9,8 +9,7 @@ ys = []
 #points to the end of the last batch
 train_batch_pointer = 0
 val_batch_pointer = 0
-
-
+DATADIR = "../rawdata"
 
 with open('../db/driving_dataset2/data.json') as data_file:
     data = json.load(data_file)

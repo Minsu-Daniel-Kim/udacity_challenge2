@@ -23,8 +23,11 @@ def train():
     BATCH_SIZE = 100
     MODEL_TITLE = "TBD"
     LOGDIR = '../save/model'
-    summaries_dir = '/tmp/mnist_logs2'
+    summaries_dir = '/tmp/' + MODEL_TITLE
+    DATASET = 'flag'
 
+    if not os.path.exists(summaries_dir):
+        os.makedirs(summaries_dir)
 
     sess = tf.InteractiveSession()
 
@@ -39,8 +42,7 @@ def train():
     sess.run(tf.initialize_all_variables())
 
     merged = tf.merge_all_summaries()
-    train_writer = tf.train.SummaryWriter(summaries_dir + '/train',
-                                          sess.graph)
+    train_writer = tf.train.SummaryWriter(summaries_dir + '/train', sess.graph)
     test_writer = tf.train.SummaryWriter(summaries_dir + '/test')
 
     saver = tf.train.Saver()
