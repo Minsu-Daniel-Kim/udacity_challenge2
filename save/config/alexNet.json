@@ -1,7 +1,9 @@
 {
-  "MODEL_TITLE": "alexNet",
-  "NUM_ITER": 100000,
-  "BATCH_SIZE": 100,
-  "MODEL_FILE": "alexnet"
+    "MODEL_TITLE": "ALEXNET",
+    "CHANNEL": 3,
+    "HEIGHT": 100,
+    "MODEL_FILE": "alexnet.json",
+    "NUM_ITER": 1000,
+    "WIDTH": 100,
+    "BATCH_SIZE": 100
 }
-
