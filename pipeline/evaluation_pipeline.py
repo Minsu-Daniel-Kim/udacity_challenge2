@@ -6,6 +6,7 @@ import driving_data
 from subprocess import call
 
 def main():
+	final_accuracy = []
 	models = utils.from_recipe()
 	for model in models:
 		config = utils.from_json_file("config", "%s.ckpt" % model)
@@ -13,23 +14,23 @@ def main():
     NUM_ITER = config["NUM_ITER"]
     BATCH_SIZE = config["BATCH_SIZE"]
     MODEL_TITLE = config["MODEL_TITLE"]
-    # LOGDIR = '../save/model'
-    # summaries_dir = '/tmp/' + MODEL_TITLE
 
 		sess = tf.InteractiveSession()
 		saver = tf.train.Saver()
-		saver.restore(sess, "save/{0}.ckpt".format(model))
+		saver.restore(sess, "../save/model/{0}.ckpt".format(MODEL_TITLE))
 
-		xs, ys_ = driving_data.val_xs, driving_data.val_ys
+		xs, ys_ = driving_data.test_xs, driving_data.test_ys
+		# ys = model.eval(xs)
 
+		with tf.name_scope('loss'):
+      loss = tf.reduce_mean(tf.square(tf.sub(y_, y)))
+      tf.scalar_summary('mse', loss)
 
-		# img = cv2.imread('steering_wheel_image.jpg',0)
-		rows,cols = img.shape
+    mse = sess.run(loss, feed_dict={x: xs, y_: ys, keep_prob: 0.8})
+    json_data = {"model": MODEL_TITLE, "mse": mse}
+    final_accuracy.append(json_data)
+  
+  utils.to_json_file(final_accuracy, "report", "final_accuracy.json")
 
-		smoothed_angle = 0
-
-		cap = cv2.VideoCapture(0)
-		while(cv2.waitKey(10) != ord('q')):
-		    ret, frame = cap.read()
-		    image = scipy.misc.imresize(frame, [66, 200]) / 255.0
-		    degrees = model.y.eval(feed_dict={model.x: [image], model.keep_prob: 1.0})[0][0] * 180 / scipy.pi
+if __name__ == '__main__':
+	main()

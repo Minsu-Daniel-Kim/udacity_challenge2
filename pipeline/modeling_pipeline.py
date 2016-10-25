@@ -73,7 +73,6 @@ def train():
         test_writer.close()
      
 def main(_):
-
     train()
 
 
