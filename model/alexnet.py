@@ -3,6 +3,10 @@ __author__ = 'DanielMinsuKim'
 import tensorflow as tf
 import scipy
 
+HEIGHT = 192
+WIDTH = 128
+n_class = 1
+
 parameters = []
 
 def conv2d(x, W):
@@ -28,9 +32,7 @@ def print_activations(t):
 
 x = tf.placeholder(tf.float32, shape=[None, 128, 192, 3])
 
-HEIGHT = 192
-WIDTH = 128
-n_class = 1
+
 
 y_ = tf.placeholder(tf.float32, shape=[None, 1])
 
