@@ -20,7 +20,7 @@ DATADIR = "../rawdata"
 
 with open(DATADIR + "/driving_dataset/data.txt") as f:
     for line in f:
-        xs.append("driving_dataset/" + line.split()[0])
+        xs.append(DATADIR + "/driving_dataset_processed/" + line.split()[0])
         ys.append(float(line.split()[1]) * scipy.pi / 180)
 
 #get number of images

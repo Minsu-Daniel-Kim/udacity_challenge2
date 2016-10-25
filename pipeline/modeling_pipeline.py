@@ -1,39 +1,47 @@
 import os
 import tensorflow as tf
-import driving_data
+import sys
+sys.path.insert(0, '../model/')
 from drivenet import DriveNet
+import driving_data
 import utils
 
-def train():
+from random import randint
 
-    LOGDIR = '../save/model'
-    models = utils.from_recipe()
+
+LOGDIR = '../save/model'
+
+
+def train():
 
     model_dict = {
 
         'driveNet': DriveNet
 
     }
+    model_configs = utils.from_recipe()
 
-    for model in models:
+    for config in model_configs:
 
         # config
-        NUM_ITER = model["NUM_ITER"]
-        BATCH_SIZE = model["BATCH_SIZE"]
-        MODEL_TITLE = model["MODEL_TITLE"]
-        MODEL_FILE = model["MODEL_FILE"]
+        NUM_ITER = config["NUM_ITER"]
+        BATCH_SIZE = config["BATCH_SIZE"]
+        MODEL_TITLE = config["MODEL_TITLE"]
+        MODEL_FILE = config["MODEL_FILE"]
         SUMMARY_DIR = '/tmp/' + MODEL_TITLE
 
         # get session
         sess = tf.InteractiveSession()
 
+
         # setup model
-        dnn = model_dict[model['MODEL_TITLE']](width=model["WIDTH"], height=model["HEIGHT"], channel=model["CHANNEL"])
+        dnn = model_dict[config['MODEL_TITLE']](width=config["WIDTH"], height=config["HEIGHT"], channel=config["CHANNEL"])
         dnn.inference()
 
         with tf.name_scope('loss'):
             loss = tf.reduce_mean(tf.square(tf.sub(dnn.y_, dnn.y)))
             tf.scalar_summary('mse', loss)
+
 
         train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
         sess.run(tf.initialize_all_variables())
@@ -50,7 +58,7 @@ def train():
             xs, ys = driving_data.LoadTrainBatch(BATCH_SIZE)
             if i % 10 == 0:
                 xs, ys = driving_data.LoadValBatch(100)
-                summary, acc = sess.run([merged, loss], feed_dict={dnn.x: xs, dnn.y_: ys, dnn.keep_prob: 0.8})
+                summary, mse = sess.run([merged, loss], feed_dict={dnn.x: xs, dnn.y_: ys, dnn.keep_prob: 0.8})
                 test_writer.add_summary(summary, i)
             elif i % 100 == 99:  # Record execution stats
                 run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
@@ -65,17 +73,17 @@ def train():
             else:
                 summary, _ = sess.run([merged, train_step], feed_dict={dnn.x: xs, dnn.y_: ys, dnn.keep_prob: 0.8})
                 train_writer.add_summary(summary, i)
+
             if i % 100 == 0:
                 if not os.path.exists(LOGDIR):
                     os.makedirs(LOGDIR)
-
+                #
                 checkpoint_path = os.path.join(LOGDIR, MODEL_TITLE + ".ckpt")
                 filename = saver.save(sess, checkpoint_path)
                 print("Model saved in file: %s" % filename)
 
-                json_data = {"iter": i, "acc": acc}
-                utils.append(model, json_data)
-                print("Model saved in file: %s" % filename)
+                json_data = {"iter": i, "mse": mse}
+                utils.append(MODEL_TITLE, json_data)
 
         train_writer.close()
         test_writer.close()

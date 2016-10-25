@@ -1,35 +1,36 @@
+import sys
 import tensorflow as tf
 import scipy.misc
-import model
 import cv2
+import utils
+sys.path.insert(0, '../model/')
 import driving_data
-from subprocess import call
 
 def main():
-	models = utils.from_recipe()
-	for model in models:
-		config = utils.from_json_file("config", "%s.ckpt" % model)
-    # config values
-    NUM_ITER = config["NUM_ITER"]
-    BATCH_SIZE = config["BATCH_SIZE"]
-    MODEL_TITLE = config["MODEL_TITLE"]
-    # LOGDIR = '../save/model'
-    # summaries_dir = '/tmp/' + MODEL_TITLE
+	final_mse = []
+	model_configs = utils.from_recipe()
+	for config in model_configs:
+		NUM_ITER = config["NUM_ITER"]
+		BATCH_SIZE = config["BATCH_SIZE"]
+		MODEL_TITLE = config["MODEL_TITLE"]
 
 		sess = tf.InteractiveSession()
 		saver = tf.train.Saver()
-		saver.restore(sess, "save/{0}.ckpt".format(model))
+		saver.restore(sess, "../save/model/{0}.ckpt".format(MODEL_TITLE))
 
-		xs, ys_ = driving_data.val_xs, driving_data.val_ys
+		xs, ys_ = driving_data.test_xs, driving_data.test_ys
 
+		with tf.name_scope('loss'):
+    		loss = tf.reduce_mean(tf.square(tf.sub(y_, y)))
+    		tf.scalar_summary('mse', loss)
 
-		# img = cv2.imread('steering_wheel_image.jpg',0)
-		rows,cols = img.shape
+	    mse = sess.run(loss, feed_dict={x: xs, y_: ys, keep_prob: 0.8})
 
-		smoothed_angle = 0
+	 	json_data = {"model": MODEL_TITLE, "mse": mse}
+	 	final_mse.append(json_data)
+	utils.to_json_file(final_mse, "report", "final_mse.json")
+	best_model, best_mse = utils.find_best_model()
+	print "Best Model is {0} With MSE {1}".format(best_model, best_mse)
 
-		cap = cv2.VideoCapture(0)
-		while(cv2.waitKey(10) != ord('q')):
-		    ret, frame = cap.read()
-		    image = scipy.misc.imresize(frame, [66, 200]) / 255.0
-		    degrees = model.y.eval(feed_dict={model.x: [image], model.keep_prob: 1.0})[0][0] * 180 / scipy.pi
+if __name__ == '__main__':
+	main()

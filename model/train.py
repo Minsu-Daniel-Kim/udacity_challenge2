@@ -2,7 +2,6 @@ import os
 import tensorflow as tf
 from drivenet import DriveNet
 import driving_data
-import model
 # import alexnet
 # model = alexnet
 
@@ -50,9 +49,9 @@ def train():
     for i in range(NUM_ITER):
         xs, ys = driving_data.LoadTrainBatch(BATCH_SIZE)
         if i % 10 == 0:
-            summary, acc = sess.run([merged, loss], feed_dict={x: xs, y_: ys, keep_prob: 0.8})
+            summary, mse = sess.run([merged, loss], feed_dict={x: xs, y_: ys, keep_prob: 0.8})
             test_writer.add_summary(summary, i)
-            print('MSE at step %s: %s' % (i, acc))
+            print('MSE at step %s: %s' % (i, mse))
         else:  # Record train set summaries, and train
 
             if i % 100 == 99:  # Record execution stats
