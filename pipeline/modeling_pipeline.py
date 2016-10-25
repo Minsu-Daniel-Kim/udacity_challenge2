@@ -1,19 +1,22 @@
 import os
 import tensorflow as tf
 import driving_data
-import model
 from drivenet import DriveNet
 import utils
 
 def train():
 
     models = utils.from_recipe()
+
     for model in models:
-        config = utils.from_json_file("config", "%s.ckpt" % model)
-        # config values
+
+        config = utils.from_json_file("config", "%s.json" % model)
+
+        # config
         NUM_ITER = config["NUM_ITER"]
         BATCH_SIZE = config["BATCH_SIZE"]
         MODEL_TITLE = config["MODEL_TITLE"]
+        MODEL_FILE = config["MODEL_FILE"]
         LOGDIR = '../save/model'
         summaries_dir = '/tmp/' + MODEL_TITLE
 
@@ -65,7 +68,7 @@ def train():
                 filename = saver.save(sess, checkpoint_path)
                 print("Model saved in file: %s" % filename)
 
-                json_data = {"iter":i, "acc":acc}
+                json_data = {"iter": i, "acc": acc}
                 utils.append(model, json_data)
                 print("Model saved in file: %s" % filename)
 
