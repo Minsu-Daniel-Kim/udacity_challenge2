@@ -79,22 +79,6 @@ def sanity_check():
     to_json_file(c, "config", "c.json")
     abcd = from_recipe()
 
-    if model["mse"] < lowest_mse:
-        lowest_mse = model["mse"]
-        best_model = model["model"]
-    return best_model, lowest_mse
-    # best_models = [[model1, min_mse], [model2, min_mse]]
-    # best_models = []
-    # for model in reports:
-    # 	best_models += [[model["model"], model["mse"].pop()["mse"]]]
-    # best_model_name = best_models[0][0]
-    # best_model_score = best_models[0][1]
-    # for candidate in best_models:
-    # 	if candidate[1] < best_model_score:
-    # 		best_model_name = candidate[0]
-    # 		best_model_score = candidate[1]
-    # return best_model_name
-
 def normalizeImage(matrix):
     pass
 

@@ -1,5 +1,1 @@
-[
-    "alexnet.json",
-    "lenet.json",
-    "nvidianet.json"
-]
+["driveNet.json"]
