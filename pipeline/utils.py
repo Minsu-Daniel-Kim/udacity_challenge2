@@ -128,38 +128,38 @@ def flatten_matrix(matrix):
 
 #     # pickle.load('../save/pickle/zca_matrix.pickle')
 #     return np.dot(ZCAMatrix, inputs)   #Data whitening
-
-def build_recipe_and_model_configs():
-    model_configs = []
-
-    model_configs.append({"MODEL_TITLE":"ALEXNET", \
-                   "MODEL_FILE":"alexnet.json", \
-                   "NUM_ITER":1000, \
-                   "BATCH_SIZE":100, \
-                   "WIDTH":100, \
-                   "HEIGHT":100, \
-                   "CHANNEL":3})
-
-    model_configs.append({"MODEL_TITLE":"LENET", \
-                   "MODEL_FILE":"lenet.json", \
-                   "NUM_ITER":1000, \
-                   "BATCH_SIZE":100, \
-                   "WIDTH":100, \
-                   "HEIGHT":100, \
-                   "CHANNEL":3})
-
-    model_configs.append({"MODEL_TITLE":"NVIDIANET", \
-                   "MODEL_FILE":"nvidianet.json", \
-                   "NUM_ITER":1000, \
-                   "BATCH_SIZE":100, \
-                   "WIDTH":100, \
-                   "HEIGHT":100, \
-                   "CHANNEL":3})
-
-    recipe = [config["MODEL_FILE"] for config in model_configs]
-    to_json_file(recipe, "config", "recipe.json")
-
-    for config in model_configs:
-        to_json_file(config, "config", config["MODEL_FILE"])
+#
+# def build_recipe_and_model_configs():
+#     model_configs = []
+#
+#     model_configs.append({"MODEL_TITLE":"ALEXNET", \
+#                    "MODEL_FILE":"alexnet.json", \
+#                    "NUM_ITER":1000, \
+#                    "BATCH_SIZE":100, \
+#                    "WIDTH":100, \
+#                    "HEIGHT":100, \
+#                    "CHANNEL":3})
+#
+#     model_configs.append({"MODEL_TITLE":"LENET", \
+#                    "MODEL_FILE":"lenet.json", \
+#                    "NUM_ITER":1000, \
+#                    "BATCH_SIZE":100, \
+#                    "WIDTH":100, \
+#                    "HEIGHT":100, \
+#                    "CHANNEL":3})
+#
+#     model_configs.append({"MODEL_TITLE":"NVIDIANET", \
+#                    "MODEL_FILE":"nvidianet.json", \
+#                    "NUM_ITER":1000, \
+#                    "BATCH_SIZE":100, \
+#                    "WIDTH":100, \
+#                    "HEIGHT":100, \
+#                    "CHANNEL":3})
+#
+#     recipe = [config["MODEL_FILE"] for config in model_configs]
+#     to_json_file(recipe, "config", "recipe.json")
+#
+#     for config in model_configs:
+#         to_json_file(config, "config", config["MODEL_FILE"])
 
 # build_recipe_and_model_configs()
