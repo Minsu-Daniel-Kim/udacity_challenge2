@@ -3,6 +3,7 @@ import tensorflow as tf
 import sys
 sys.path.insert(0, '../model/')
 from drivenet import DriveNet
+from drivenet2 import DriveNet2
 from driving_data import Dataset
 import utils
 
@@ -16,7 +17,8 @@ def train():
 
     model_dict = {
 
-        'driveNet': DriveNet
+        'driveNet': DriveNet,
+        'driveNet2': DriveNet2
 
     }
     model_configs = utils.from_recipe()

@@ -1,0 +1,10 @@
+{
+  "MODEL_TITLE": "driveNet2",
+  "NUM_ITER": 100000,
+  "BATCH_SIZE": 100,
+  "WIDTH": 200,
+  "HEIGHT": 64,
+  "CHANNEL": 3,
+  "MODEL_FILE": "drivenet2"
+}
+

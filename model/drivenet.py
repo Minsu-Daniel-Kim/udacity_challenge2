@@ -29,73 +29,83 @@ class DriveNet:
         self.x = tf.placeholder(tf.float32, shape=[None, self.height, self.width, self.channel])
         self.y_ = tf.placeholder(tf.float32, shape=[None, 1])
 
-        # 1st convolutional layer
-        W_conv1 = self.weight_variable([5, 5, self.channel, 24])
-        b_conv1 = self.bias_variable([24])
+        with tf.name_scope('input_reshape'):
+            tf.image_summary('input', self.x, 10)
 
-        h_conv1 = tf.nn.relu(self.conv2d(self.x, W_conv1, 2) + b_conv1)
+        # 1st convolutional layer
+        with tf.name_scope('conv1') as scope:
+            W_conv1 = self.weight_variable([5, 5, self.channel, 24])
+            b_conv1 = self.bias_variable([24])
+            h_conv1 = tf.nn.relu(self.conv2d(self.x, W_conv1, 2) + b_conv1)
 
         # 2nd convolutional layer
-        W_conv2 = self.weight_variable([5, 5, 24, 36])
-        b_conv2 = self.bias_variable([36])
-
-        h_conv2 = tf.nn.relu(self.conv2d(h_conv1, W_conv2, 2) + b_conv2)
+        with tf.name_scope('conv2') as scope:
+            W_conv2 = self.weight_variable([5, 5, 24, 36])
+            b_conv2 = self.bias_variable([36])
+            h_conv2 = tf.nn.relu(self.conv2d(h_conv1, W_conv2, 2) + b_conv2)
 
         # 3rd convolutional layer
-        W_conv3 = self.weight_variable([5, 5, 36, 48])
-        b_conv3 = self.bias_variable([48])
-
-        h_conv3 = tf.nn.relu(self.conv2d(h_conv2, W_conv3, 2) + b_conv3)
+        with tf.name_scope('conv3') as scope:
+            W_conv3 = self.weight_variable([5, 5, 36, 48])
+            b_conv3 = self.bias_variable([48])
+            h_conv3 = tf.nn.relu(self.conv2d(h_conv2, W_conv3, 2) + b_conv3)
 
         # 4th convolutional layer
-        W_conv4 = self.weight_variable([3, 3, 48, 64])
-        b_conv4 = self.bias_variable([64])
-
-        h_conv4 = tf.nn.relu(self.conv2d(h_conv3, W_conv4, 1) + b_conv4)
+        with tf.name_scope('conv4') as scope:
+            W_conv4 = self.weight_variable([3, 3, 48, 64])
+            b_conv4 = self.bias_variable([64])
+            h_conv4 = tf.nn.relu(self.conv2d(h_conv3, W_conv4, 1) + b_conv4)
 
         # 5th convolutional layer
-        W_conv5 = self.weight_variable([3, 3, 64, 64])
-        b_conv5 = self.bias_variable([64])
-
-        h_conv5 = tf.nn.relu(self.conv2d(h_conv4, W_conv5, 1) + b_conv5)
+        with tf.name_scope('conv5') as scope:
+            W_conv5 = self.weight_variable([3, 3, 64, 64])
+            b_conv5 = self.bias_variable([64])
+            h_conv5 = tf.nn.relu(self.conv2d(h_conv4, W_conv5, 1) + b_conv5)
 
         # 1st fully connected layer
-        W_fc1 = self.weight_variable([1152, 1164])
-        b_fc1 = self.bias_variable([1164])
+        with tf.name_scope('full1') as scope:
+            W_fc1 = self.weight_variable([1152, 1164])
+            b_fc1 = self.bias_variable([1164])
 
-        h_conv5_flat = tf.reshape(h_conv5, [-1, 1152])
-        h_fc1 = tf.nn.relu(tf.matmul(h_conv5_flat, W_fc1) + b_fc1)
+            h_conv5_flat = tf.reshape(h_conv5, [-1, 1152])
+            h_fc1 = tf.nn.relu(tf.matmul(h_conv5_flat, W_fc1) + b_fc1)
 
-        self.keep_prob = tf.placeholder(tf.float32)
-        h_fc1_drop = tf.nn.dropout(h_fc1, self.keep_prob)
+        with tf.name_scope('dropout'):
+            self.keep_prob = tf.placeholder(tf.float32)
+            tf.scalar_summary('dropout_keep_probability', self.keep_prob)
+            h_fc1_drop = tf.nn.dropout(h_fc1, self.keep_prob)
 
         # 2nd fully connected layer
-        W_fc2 = self.weight_variable([1164, 100])
-        b_fc2 = self.bias_variable([100])
+        with tf.name_scope('full2') as scope:
+            W_fc2 = self.weight_variable([1164, 100])
+            b_fc2 = self.bias_variable([100])
 
-        h_fc2 = tf.nn.relu(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+            h_fc2 = tf.nn.relu(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 
-        h_fc2_drop = tf.nn.dropout(h_fc2, self.keep_prob)
+            h_fc2_drop = tf.nn.dropout(h_fc2, self.keep_prob)
 
         # 3rd fully connected layer
-        W_fc3 = self.weight_variable([100, 50])
-        b_fc3 = self.bias_variable([50])
+        with tf.name_scope('full3') as scope:
+            W_fc3 = self.weight_variable([100, 50])
+            b_fc3 = self.bias_variable([50])
 
-        h_fc3 = tf.nn.relu(tf.matmul(h_fc2_drop, W_fc3) + b_fc3)
+            h_fc3 = tf.nn.relu(tf.matmul(h_fc2_drop, W_fc3) + b_fc3)
 
-        h_fc3_drop = tf.nn.dropout(h_fc3, self.keep_prob)
+            h_fc3_drop = tf.nn.dropout(h_fc3, self.keep_prob)
 
         # 4th fully connected layer
-        W_fc4 = self.weight_variable([50, 10])
-        b_fc4 = self.bias_variable([10])
+        with tf.name_scope('full4') as scope:
+            W_fc4 = self.weight_variable([50, 10])
+            b_fc4 = self.bias_variable([10])
 
-        h_fc4 = tf.nn.relu(tf.matmul(h_fc3_drop, W_fc4) + b_fc4)
+            h_fc4 = tf.nn.relu(tf.matmul(h_fc3_drop, W_fc4) + b_fc4)
 
-        h_fc4_drop = tf.nn.dropout(h_fc4, self.keep_prob)
+            h_fc4_drop = tf.nn.dropout(h_fc4, self.keep_prob)
 
         # 5th fully connected layer
-        W_fc5 = self.weight_variable([10, 1])
-        b_fc5 = self.bias_variable([1])
+        with tf.name_scope('full5') as scope:
+            W_fc5 = self.weight_variable([10, 1])
+            b_fc5 = self.bias_variable([1])
 
         # output
         self.y = tf.mul(tf.atan(tf.matmul(h_fc4_drop, W_fc5) + b_fc5), 2)
