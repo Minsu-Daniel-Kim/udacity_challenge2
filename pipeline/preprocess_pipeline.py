@@ -24,12 +24,6 @@ def preprocessImage(imagePath):
 	# trf = ZCA().fit(image_flattened)
 	# image_whitened = trf.transform(image_flattened)
 
-	# with open('../save/pickle/image_flattened.pickle', 'wb') as outfile:
-	# 	pickle.dump(image_flattened, outfile)
-	# with open('../save/pickle/zca_matrix.pickle', 'wb') as outfile:
- #    pickle.dump(image_whitened, outfile)
-	# utils.zca_whitening(gathered_matrix)
-
 def readConfig(filePath):
 	with open(filePath) as config_file:
 		config = json.load(config_file)

@@ -6,17 +6,19 @@ import utils
 sys.path.insert(0, '../model/')
 import driving_data
 
+LOGDIR = '../save/model'
+
 def main():
 	final_mse = []
 	model_configs = utils.from_recipe()
 	for config in model_configs:
-		NUM_ITER = config["NUM_ITER"]
-		BATCH_SIZE = config["BATCH_SIZE"]
 		MODEL_TITLE = config["MODEL_TITLE"]
 
 		sess = tf.InteractiveSession()
 		saver = tf.train.Saver()
-		saver.restore(sess, "../save/model/{0}.ckpt".format(MODEL_TITLE))
+
+		checkpoint_path = os.path.join(LOGDIR, MODEL_TITLE + ".ckpt")
+		saver.restore(sess, checkpoint_path)
 
 		xs, ys_ = driving_data.test_xs, driving_data.test_ys
 

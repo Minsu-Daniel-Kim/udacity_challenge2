@@ -8,9 +8,7 @@ import utils
 
 from random import randint
 
-
 LOGDIR = '../save/model'
-
 
 def train():
 
@@ -38,7 +36,7 @@ def train():
         # get session
         sess = tf.InteractiveSession()
 
-        # setupt dataset
+        # setup dataset
         driving_data = Dataset(DATA_DIR='../rawdata/driving_dataset', file_name='data.txt', width=WIDTH, height=HEIGHT)
 
         # setup model
@@ -89,8 +87,8 @@ def train():
                 filename = saver.save(sess, checkpoint_path)
                 print("Model saved in file: %s" % filename)
 
-                # json_data = {"iter": i, "mse": mse}
-                # utils.append(MODEL_TITLE, json_data)
+                json_data = {"iter": i, "mse": mse}
+                utils.append(MODEL_TITLE, json_data)
 
         train_writer.close()
         test_writer.close()
