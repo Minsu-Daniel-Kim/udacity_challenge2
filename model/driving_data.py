@@ -1,7 +1,7 @@
 import scipy.misc
 import random
 import json
-import train
+
 
 xs = []
 ys = []
