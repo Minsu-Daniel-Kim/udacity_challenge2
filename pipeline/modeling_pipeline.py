@@ -1,9 +1,9 @@
 import os
 import tensorflow as tf
 import sys
-# sys.path.insert(0, '../model/')
+sys.path.insert(0, '../model/')
 from drivenet import DriveNet
-import driving_data
+from driving_data import Dataset
 import utils
 
 from random import randint
@@ -29,15 +29,20 @@ def train():
         MODEL_TITLE = config["MODEL_TITLE"]
         MODEL_FILE = config["MODEL_FILE"]
         SUMMARY_DIR = '../save/log/' + MODEL_TITLE
+        WIDTH = config["WIDTH"]
+        HEIGHT = config["HEIGHT"]
+        CHANNEL = config["CHANNEL"]
 
         if not os.path.exists(SUMMARY_DIR):
             os.makedirs(SUMMARY_DIR)
         # get session
         sess = tf.InteractiveSession()
 
+        # setupt dataset
+        driving_data = Dataset(DATA_DIR='../rawdata/driving_dataset', file_name='data.txt', width=WIDTH, height=HEIGHT)
 
         # setup model
-        dnn = model_dict[config['MODEL_TITLE']](width=config["WIDTH"], height=config["HEIGHT"], channel=config["CHANNEL"])
+        dnn = model_dict[MODEL_TITLE](width=WIDTH, height=HEIGHT, channel=CHANNEL)
         dnn.inference()
 
         with tf.name_scope('loss'):
@@ -76,7 +81,7 @@ def train():
                 summary, _ = sess.run([merged, train_step], feed_dict={dnn.x: xs, dnn.y_: ys, dnn.keep_prob: 0.8})
                 train_writer.add_summary(summary, i)
 
-            if i % 100 == 0:
+            if i % 1000 == 0 and i is not 0:
                 if not os.path.exists(LOGDIR):
                     os.makedirs(LOGDIR)
                 #
@@ -84,8 +89,8 @@ def train():
                 filename = saver.save(sess, checkpoint_path)
                 print("Model saved in file: %s" % filename)
 
-                json_data = {"iter": i, "mse": mse}
-                utils.append(MODEL_TITLE, json_data)
+                # json_data = {"iter": i, "mse": mse}
+                # utils.append(MODEL_TITLE, json_data)
 
         train_writer.close()
         test_writer.close()

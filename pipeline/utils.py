@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 
 
-SAVE_DIR = "save"
+SAVE_DIR = "../save"
 
 # Serializes DATA under NAME
 # Serialize to save/DIRECTORY/name
@@ -57,38 +57,38 @@ def append(desired_model, entry):
 
 # Reads report.json, and finds the best model
 # Returns a string (name of best model)
-def find_best_model():
-    reports = from_json_file("report", "final_mse.json")
-    lowest_mse = float('inf')
-    best_model = []
-    for model in reports:
-        best_models += [[model["model"], model["accuracy"].pop()["acc"]]]
-    best_model_name = best_models[0][0]
-    best_model_score = best_models[0][1]
-    for candidate in best_models:
-        if candidate[1] < best_model_score:
-            best_model_name = candidate[0]
-            best_model_score = candidate[1]
-    return best_model_name
+# def find_best_model():
+#     reports = from_json_file("report", "final_mse.json")
+#     lowest_mse = float('inf')
+#     best_model = []
+#     for model in reports:
+#         best_models += [[model["model"], model["accuracy"].pop()["acc"]]]
+#     best_model_name = best_models[0][0]
+#     best_model_score = best_models[0][1]
+#     for candidate in best_models:
+#         if candidate[1] < best_model_score:
+#             best_model_name = candidate[0]
+#             best_model_score = candidate[1]
+#     return best_model_name
 
 
-def sanity_check():
-    test_recipe = ["a.json", "b.json", "c.json"]
-    a = {"Dog": 1, "Cat": 2, "Giraffe": 3}
-    b = {"Fermat": 4, "Euler": 5, "Galois": 6}
-    c = {"Berkeley": 1, "Stanford": 2, "Sunshine": 3}
-
-    # to_json_file(test_recipe, "config", "recipe.json")
-
-    to_json_file(a, "config", "a.json")
-    to_json_file(b, "config", "b.json")
-    to_json_file(c, "config", "c.json")
-    abcd = from_recipe()
-
-    if model["mse"] < lowest_mse:
-        lowest_mse = model["mse"]
-        best_model = model["model"]
-    return best_model, lowest_mse
+# def sanity_check():
+#     test_recipe = ["a.json", "b.json", "c.json"]
+#     a = {"Dog": 1, "Cat": 2, "Giraffe": 3}
+#     b = {"Fermat": 4, "Euler": 5, "Galois": 6}
+#     c = {"Berkeley": 1, "Stanford": 2, "Sunshine": 3}
+#
+#     # to_json_file(test_recipe, "config", "recipe.json")
+#
+#     to_json_file(a, "config", "a.json")
+#     to_json_file(b, "config", "b.json")
+#     to_json_file(c, "config", "c.json")
+#     abcd = from_recipe()
+#
+#     if model["mse"] < lowest_mse:
+#         lowest_mse = model["mse"]
+#         best_model = model["model"]
+#     return best_model, lowest_mse
     # best_models = [[model1, min_mse], [model2, min_mse]]
     # best_models = []
     # for model in reports:
@@ -162,4 +162,4 @@ def build_recipe_and_model_configs():
     for config in model_configs:
         to_json_file(config, "config", config["MODEL_FILE"])
 
-build_recipe_and_model_configs()
+# build_recipe_and_model_configs()
