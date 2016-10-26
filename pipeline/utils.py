@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 
 
-SAVE_DIR = "save"
+SAVE_DIR = "../save"
 
 # Serializes DATA under NAME
 # Serialize to save/DIRECTORY/name
@@ -20,9 +20,6 @@ def from_json_file(directory, file_name):
     path_name = SAVE_DIR + '/' + directory + '/' + file_name
     with open(path_name) as data_file:
         data = json.load(data_file)
-
-    print(data)
-
     return data
 
 
@@ -60,16 +57,13 @@ def append(desired_model, entry):
 def find_best_model():
     reports = from_json_file("report", "final_mse.json")
     lowest_mse = float('inf')
-    best_model = []
+    best_model_name = None
     for model in reports:
-        best_models += [[model["model"], model["accuracy"].pop()["acc"]]]
-    best_model_name = best_models[0][0]
-    best_model_score = best_models[0][1]
-    for candidate in best_models:
-        if candidate[1] < best_model_score:
-            best_model_name = candidate[0]
-            best_model_score = candidate[1]
-    return best_model_name
+        if model['mse'] < lowest_mse:
+            lowest_mse = model['mse']
+            best_model_name = model['model']  
+
+    return best_model_name, lowest_mse
 
 
 def sanity_check():
@@ -161,5 +155,3 @@ def build_recipe_and_model_configs():
 
     for config in model_configs:
         to_json_file(config, "config", config["MODEL_FILE"])
-
-build_recipe_and_model_configs()

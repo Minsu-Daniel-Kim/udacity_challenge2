@@ -1,8 +1,6 @@
 from os import listdir
 from os.path import isfile, join
-from zca import ZCA
 import argparse
-import sys
 import numpy
 import cv2
 import json
@@ -13,14 +11,10 @@ Given Paths, reads images in paths and does all preprocesses marked in ARGS.
 All processed images are stored in new directories with appended suffix "_processed".
 """
 def preprocessImage(imagePath):
-	# for path in paths:
 	processedImagePath = imagePath + "_processed"
-	print processedImagePath
 	readableImages = [ f for f in listdir(imagePath) if not f.startswith('.') and isfile(join(imagePath,f)) ]
 	image_flattened = None
 	for n in range(0, len(readableImages)):
-		if n % 5000 == 0:
-			print n
 		image = cv2.imread( join(imagePath,readableImages[n]) )
 	#   # if args.zca:
 	#   # 	image_flattened = utils.gather_flattened_image(image, image_flattened)
@@ -44,7 +38,7 @@ def readConfig(filePath):
 			if k in argDict.keys():
 				argDict[k] = eval(v)
 			else:
-				print "ERROR: Given Option Does Not Exist."
+				print ("ERROR: Given Option Does Not Exist.")
 				sys.exit()
 
 def main():

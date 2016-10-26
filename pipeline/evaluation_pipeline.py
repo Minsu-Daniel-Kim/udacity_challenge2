@@ -21,16 +21,16 @@ def main():
 		xs, ys_ = driving_data.test_xs, driving_data.test_ys
 
 		with tf.name_scope('loss'):
-    		loss = tf.reduce_mean(tf.square(tf.sub(y_, y)))
-    		tf.scalar_summary('mse', loss)
+			loss = tf.reduce_mean(tf.square(tf.sub(y_, y)))
+			tf.scalar_summary('mse', loss)
 
-	    mse = sess.run(loss, feed_dict={x: xs, y_: ys, keep_prob: 0.8})
+		mse = sess.run(loss, feed_dict={x: xs, y_: ys, keep_prob: 0.8})
 
-	 	json_data = {"model": MODEL_TITLE, "mse": mse}
-	 	final_mse.append(json_data)
+		json_data = {"model": MODEL_TITLE, "mse": mse}
+		final_mse.append(json_data)
 	utils.to_json_file(final_mse, "report", "final_mse.json")
 	best_model, best_mse = utils.find_best_model()
-	print "Best Model is {0} With MSE {1}".format(best_model, best_mse)
+	print ("Best Model is {0} With MSE {1}".format(best_model, best_mse))
 
 if __name__ == '__main__':
 	main()
