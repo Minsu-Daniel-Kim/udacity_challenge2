@@ -2,7 +2,11 @@ import os.path
 import json
 import numpy as np
 import pickle
-
+from scipy import linalg
+# from sklearn.utils import array2d, as_float_array
+# from sklearn.base import TransformerMixin, BaseEstimator
+from sklearn import preprocessing
+import matplotlib.pyplot as plt
 
 SAVE_DIR = "../save"
 
@@ -80,32 +84,21 @@ def sanity_check():
     abcd = from_recipe()
 
 def normalizeImage(matrix):
-    pass
+    return preprocessing.scale(matrix)
 
-def gather_flattened_image(matrix, data_gathered):
-    flattened = flatten_matrix(matrix)
-    if data_gathered == None:
-        data_gathered = flattened
-    else:
-        data_gathered = np.vstack((data_gathered, flattened))
-    return data_gathered
+def zca(X):
+    print (X.shape)
+    mean_X = X.mean(axis=0)
+    num_data = X.shape[0]
+    for i in range(num_data):
+        X[i] -= mean_X
+    sigma = X.dot(X.T) / X.shape[1]
+    U,S,V = linalg.svd(sigma)
+    epsilon = 1e-5
 
-def flatten_matrix(matrix):
-    vector = matrix.flatten(1)
-    vector = vector.reshape(1, len(vector))
-    return vector
-
-
-# def zca_whitening(inputs):
-#     sigma = np.dot(inputs, inputs.T)/inputs.shape[1] #Correlation matrix
-#     U,S,V = np.linalg.svd(sigma) #Singular Value Decomposition
-#     epsilon = 0.1                #Whitening constant, it prevents division by zero
-#     ZCAMatrix = np.dot(np.dot(U, np.diag(1.0/np.sqrt(np.diag(S) + epsilon))), U.T) #ZCA Whitening matrix
-#     with open('../save/pickle/zca_matrix.pickle', 'wb') as outfile:
-#         pickle.dump(ZCAMatrix, outfile)
-
-#     # pickle.load('../save/pickle/zca_matrix.pickle')
-#     return np.dot(ZCAMatrix, inputs)   #Data whitening
+    xPCAWhite = np.diag(1.0 / np.sqrt(S+epsilon)).dot(U.T).dot(X)
+    xZCAWhite = U.dot(xPCAWhite)
+    return xZCAWhite
 
 def build_recipe_and_model_configs():
     model_configs = []

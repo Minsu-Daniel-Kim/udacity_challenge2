@@ -1,10 +1,11 @@
 from os import listdir
 from os.path import isfile, join
 import argparse
-import numpy
+import numpy as np
 import cv2
 import json
 import utils
+import pylab
 
 """ 
 Given Paths, reads images in paths and does all preprocesses marked in ARGS.
@@ -13,16 +14,28 @@ All processed images are stored in new directories with appended suffix "_proces
 def preprocessImage(imagePath):
 	processedImagePath = imagePath + "_processed"
 	readableImages = [ f for f in listdir(imagePath) if not f.startswith('.') and isfile(join(imagePath,f)) ]
-	image_flattened = None
-	for n in range(0, len(readableImages)):
-		image = cv2.imread( join(imagePath,readableImages[n]) )
-	#   # if args.zca:
-	#   # 	image_flattened = utils.gather_flattened_image(image, image_flattened)
+	
+	m,n,l = 256, 455, 3
+	flat_len = m*n*l
+	imnbr = len(readableImages)
+	immatrix = np.empty((0, flat_len), float)
+
+	for i in range(imnbr):
+		image = cv2.imread(join(imagePath,readableImages[i]))
+		image = image.reshape([1, flat_len])
 		if args.normalized:
 			image = utils.normalizeImage(image)
-		cv2.imwrite(join(processedImagePath, readableImages[n]), image)
-	# trf = ZCA().fit(image_flattened)
-	# image_whitened = trf.transform(image_flattened)
+		if args.zca:
+			immatrix = np.vstack((immatrix, image))
+
+	x_zca = utils.zca(immatrix)
+	# TODO pickle immatrix, x_zca
+
+	for i in range(imnbr):
+		imageMat = x_zca[i,:]
+		print (imageMat.shape)
+		imageProcessed = imageMat.reshape(m, n, l)
+		cv2.imwrite(join(processedImagePath, readableImages[i]), imageProcessed)
 
 def readConfig(filePath):
 	with open(filePath) as config_file:
