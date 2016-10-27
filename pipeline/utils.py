@@ -3,25 +3,37 @@ import json
 import numpy as np
 import pickle
 from scipy import linalg
-# from sklearn.utils import array2d, as_float_array
-# from sklearn.base import TransformerMixin, BaseEstimator
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
 
 SAVE_DIR = "../save"
 
-# Serializes DATA under NAME
-# Serialize to save/DIRECTORY/name
-# Remember to add extension manually if there needs to be any.
+# Saves given DATA into SAVE_DIR/DIRECTORY/NAME
+def save_pickle(data, directory, name):
+    path_name = SAVE_DIR + '/' + directory + '/' + name
+    with open(path_name, 'wb') as f:
+        pickle.dump(data, f)
+
+# Reads serialized data stored in SAVE_DIR/DIRECTORY/NAME
+# RETURNS loaded serialized data, DATA.
+def load_pickle(directory, name):
+    path_name = SAVE_DIR + '/' + directory + '/' + name
+    with open(path_name) as f:
+        data = pickle.load(f)
+    return data
+
+# Dumps DATA into JSON format in save/DIRECTORY/name
+# NAME should include extension if there needs to be any.
 def to_json_file(data, directory, name):
     path_name = SAVE_DIR + '/' + directory + '/' + name
     with open(path_name, 'w') as f:
         json.dump(data, f, indent=4, separators=(',', ': '))
 
 
-# Opens up a file located in save/DIRECTORY/FILE_NAME
-def from_json_file(directory, file_name):
-    path_name = SAVE_DIR + '/' + directory + '/' + file_name
+# Reads JSON file in SAVE_DIR/DIRECTORY/NAME
+# RETURNS loaded data, DATA.
+def from_json_file(directory, name):
+    path_name = SAVE_DIR + '/' + directory + '/' + name
     with open(path_name) as data_file:
         data = json.load(data_file)
     return data
@@ -56,8 +68,8 @@ def append(desired_model, entry):
     to_json_file(all_models, "report", "report.json")
 
 
-# Reads report.json, and finds the best model
-# Returns a string (name of best model)
+# Reads "final_mse.json", and finds the best model
+# RETURNS "name of best model", "mse of the best model"
 def find_best_model():
     reports = from_json_file("report", "final_mse.json")
     lowest_mse = float('inf')
@@ -69,37 +81,25 @@ def find_best_model():
 
     return best_model_name, lowest_mse
 
+# Normalizes given image set, X.
+def normalize(X):
+    return preprocessing.scale(X)
 
-def sanity_check():
-    test_recipe = ["a.json", "b.json", "c.json"]
-    a = {"Dog": 1, "Cat": 2, "Giraffe": 3}
-    b = {"Fermat": 4, "Euler": 5, "Galois": 6}
-    c = {"Berkeley": 1, "Stanford": 2, "Sunshine": 3}
-
-    # to_json_file(test_recipe, "config", "recipe.json")
-
-    to_json_file(a, "config", "a.json")
-    to_json_file(b, "config", "b.json")
-    to_json_file(c, "config", "c.json")
-    abcd = from_recipe()
-
-def normalizeImage(matrix):
-    return preprocessing.scale(matrix)
-
+# ZCA whitens given image set, X.
 def zca(X):
-    print (X.shape)
     mean_X = X.mean(axis=0)
-    num_data = X.shape[0]
-    for i in range(num_data):
+    for i in range(X.shape[0]):
         X[i] -= mean_X
     sigma = X.dot(X.T) / X.shape[1]
     U,S,V = linalg.svd(sigma)
     epsilon = 1e-5
 
-    xPCAWhite = np.diag(1.0 / np.sqrt(S+epsilon)).dot(U.T).dot(X)
+    xPCAWhite = np.diag(1./np.sqrt(S+epsilon)).dot(U.T).dot(X)
     xZCAWhite = U.dot(xPCAWhite)
+    save_pickle(xZCAWhite, 'pickle', 'zca_immatrix.pickle')
     return xZCAWhite
 
+# BUILDS recipe and config files needed for Models.
 def build_recipe_and_model_configs():
     model_configs = []
 
@@ -132,3 +132,16 @@ def build_recipe_and_model_configs():
 
     for config in model_configs:
         to_json_file(config, "config", config["MODEL_FILE"])
+
+def sanity_check():
+    test_recipe = ["a.json", "b.json", "c.json"]
+    a = {"Dog": 1, "Cat": 2, "Giraffe": 3}
+    b = {"Fermat": 4, "Euler": 5, "Galois": 6}
+    c = {"Berkeley": 1, "Stanford": 2, "Sunshine": 3}
+
+    # to_json_file(test_recipe, "config", "recipe.json")
+
+    to_json_file(a, "config", "a.json")
+    to_json_file(b, "config", "b.json")
+    to_json_file(c, "config", "c.json")
+    abcd = from_recipe()
